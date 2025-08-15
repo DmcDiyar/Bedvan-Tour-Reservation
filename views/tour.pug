@@ -1,0 +1,120 @@
+extends base
+include _reviewCard
+
+block append head
+  script(src='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js')
+  link(rel='stylesheet', href='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css')
+  script(src='https://js.stripe.com/v3/')
+  script(src='/js/stripe.js')
+  script(src='/js/animations.js')
+
+mixin overviewBox(label, text, icon)
+  .overview-box__detail.overview-box__detail--modern
+    svg.overview-box__icon
+      use(xlink:href=`/img/icons.svg#icon-${icon}`)
+    span.overview-box__label= label
+    span.overview-box__text= text
+
+block content
+  main.main
+    // Hero Bölümü
+    section.section-header.section-header--modern
+      .header__hero
+        .header__hero-overlay
+        img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+      .heading-box.heading-box--modern
+        h1.heading-primary
+          span= `${tour.name} Turu`
+        .heading-box__group
+          .heading-box__detail
+            svg.heading-box__icon
+              use(xlink:href='/img/icons.svg#icon-clock')
+            span.heading-box__text= `${tour.duration} gün`
+          .heading-box__detail
+            svg.heading-box__icon
+              use(xlink:href='/img/icons.svg#icon-map-pin')
+            span.heading-box__text= tour.startLocation.description
+
+    // Hızlı Bilgiler ve Rehberler
+    section.section-description.section-description--modern
+      .container
+        .overview-box.overview-box--modern
+          .overview-box__group
+            h2.heading-secondary.ma-bt-lg Hızlı Bilgiler
+            - var date = tour.startDates[0].toLocaleString('en-us', { month: 'long', year: 'numeric' })
+            +overviewBox('Başlangıç Tarihi', date, 'calendar')
+            +overviewBox('Zorluk', tour.difficulty, 'trending-up')
+            +overviewBox('Katılımcılar', `${tour.maxGroupSize} kişi`, 'user')
+            +overviewBox('Puan', `${tour.ratingsAverage} / 5`, 'star')
+          .overview-box__group
+            h2.heading-secondary.ma-bt-lg Tur Rehberleriniz
+            each guide in tour.guides
+              .overview-box__detail
+                img.overview-box__img(src=`/img/users/${guide.photo}`, alt=`${guide.name}`)
+                if guide.role === 'lead-guide'
+                  span.overview-box__label Baş Rehber
+                else
+                  span.overview-box__label Tur Rehberi
+                span.overview-box__text= guide.name
+
+        .description-box.description-box--modern
+          h2.heading-secondary.ma-bt-lg= `${tour.name} Turu Hakkında`
+          - var paragraphs = tour.description.split('\n')
+          each p in paragraphs
+            p.description__text= p
+
+    // Galeri
+    section.section-pictures.section-pictures--modern
+      .container
+        each img, i in tour.images
+          .picture-box
+            img.picture-box__img(
+              src=`/img/tours/${img}`
+              alt=`${tour.name} resim ${i + 1}`
+              class=`picture-box__img--${i + 1}`
+            )
+
+    // Harita
+    section.section-map.section-map--modern
+      .container
+        h2.section-title Tur Konumları
+        #map(data-locations=`${JSON.stringify(tour.locations)}`)
+
+    // Yorumlar
+    section.section-reviews.section-reviews--modern
+      .container
+        h2.section-title Müşterilerimizin Yorumları
+        .reviews
+          each review in tour.reviews
+            +reviewCard(review)
+        if user
+          form#review-form.mt-4(data-tour-id=tour.id)
+            .form__group
+              label.form__label(for='review-rating') Puan (1-5)
+              select#review-rating.form__input
+                option(value='5' selected) 5
+                option(value='4') 4
+                option(value='3') 3
+                option(value='2') 2
+                option(value='1') 1
+            .form__group
+              label.form__label(for='review-text') Yorumunuz
+              textarea#review-text.form__input(placeholder='Deneyiminizi yazın...' rows='3')
+            .form__group
+              button.btn.btn--green(type='submit') Gönder
+
+    // Rezervasyon CTA
+    section.section-cta.section-cta--modern
+      .container
+        .cta.cta--modern
+          .cta__img.cta__img--logo
+            img(src='/img/logo.jpg', alt='Dmc')
+          img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tur resmi')
+          img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tur resmi')
+          .cta__content
+            h2.heading-secondary Daha neyi bekliyorsun?
+            p.cta__text= `${tour.duration} gün. 1 macera. Sonsuz anılar. Hemen yerini ayır!`
+            if user
+              button.btn.btn--green.span-all-rows#book-tour(data-tour-id=tour.id) Turu Rezerve Et!
+            else
+              a.btn.btn--green.span-all-rows(href='/login') Rezervasyon için giriş yap

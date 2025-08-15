@@ -1,0 +1,14 @@
+header.header.header--sticky
+  .header__logo
+    img(src='/img/logo.jpg' alt=' logosu')
+  nav.nav.nav--tours.nav--modern
+    a.nav__el(href='/') Tüm Turlar
+  nav.nav.nav--user.nav--modern
+    if user
+      a.nav__el.nav__el--logout Çıkış Yap
+      a.nav__el.nav__el--profile(href='/me')
+        img.nav__user-img(src=`/img/users/${user.photo}` alt=`${user.name} fotoğrafı`)
+        span= user.name.split(' ')[0]
+    else
+      a.nav__el.nav__el--login(href='/login') Giriş Yap
+      a.nav__el.nav__el--cta.nav__el--signup(href='/signup') Kayıt Ol
