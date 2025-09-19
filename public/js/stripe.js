@@ -12,11 +12,12 @@ export const bookTour = async (tourId) => {
       `/api/v1/bookings/checkout-session/${tourId}`,
     );
 
-    if (response.data.status !== 'success')
+    // Updated to check for success property instead of status
+    if (!response.data.success)
       throw new Error('Checkout session oluşturulamadı');
 
     await stripe.redirectToCheckout({
-      sessionId: response.data.session.id,
+      sessionId: response.data.data.session.id,
     });
   } catch (err) {
     console.error('Booking error:', err);

@@ -1,61 +1,91 @@
 extends base
 
 mixin navItem(link, text, icon, active)
-  li(class=`${active ? 'side-nav--active' : ''}`)
-    a(href=`${link}`)
-      svg
-        use(xlink:href=`img/icons.svg#icon-${icon}`)
-      | #{text}
+  li(class=`nav-item ${active ? 'nav-item--active' : ''}`)
+    a.nav-link(href=`${link}`)
+      i(class=`fas fa-${icon} nav-icon`)
+      span.nav-text= text
 
 block content
   main.main
-    .user-view.user-view--modern
-      nav.user-view__menu
-        ul.side-nav
-          +navItem('#', 'Ayarlar', 'settings', true)
-          +navItem('/my-tours', 'Rezervasyonlarım', 'briefcase')
-          +navItem('#', 'Yorumlarım', 'star')
-          +navItem('#', 'Faturalandırma', 'credit-card')
+    .container
+      .profile-header
+        .profile-avatar
+          img.profile-img(src=`${user ? '/img/users/' + (user.photo || 'default.jpg') : '/img/users/default.jpg'}`, alt='Profile Photo')
+          h2.profile-name= user ? user.name : 'User'
+          p.profile-email= user ? user.email : 'user@example.com'
+        
+        .profile-actions
+          button.btn.btn--outline
+            i.fas.fa-edit
+            | Edit Profile
+          
+      .profile-content
+        .profile-sidebar
+          ul.nav.nav--vertical
+            +navItem('/me', 'Profile Settings', 'user', true)
+            +navItem('/my-tours', 'My Bookings', 'briefcase', false)
+            +navItem('/my-reviews', 'My Reviews', 'star', false)
+            +navItem('#', 'Payment Methods', 'credit-card', false)
+            
+            if user && user.role === 'admin'
+              li.nav-divider Admin
+              +navItem('/admin/tours', 'Manage Tours', 'map', false)
+              +navItem('/admin/users', 'Manage Users', 'users', false)
+              +navItem('/admin/bookings', 'Manage Bookings', 'file-invoice', false)
+              +navItem('/admin/reviews', 'Manage Reviews', 'comments', false)
 
-        if user.role === 'admin'
-          .admin-nav
-            h5.admin-nav__heading Yönetici
-            ul.side-nav
-              +navItem('#', 'Turları Yönet', 'map')
-              +navItem('#', 'Kullanıcıları Yönet', 'users')
-              +navItem('#', 'Yorumları Yönet', 'star')
-              +navItem('#', 'Rezervasyonları Yönet', 'briefcase')
-
-      .user-view__content
-        .user-view__form-container
-          h2.heading-secondary.ma-bt-md Hesap Ayarların
-          form.form.form-user-data
-            .form__group
-              label.form__label(for='name') İsim
-              input#name.form__input(type='text', value=`${user.name}`, required, name='name')
-            .form__group.ma-bt-md
-              label.form__label(for='email') E-posta Adresi
-              input#email.form__input(type='email', value=`${user.email}`, required, name='email')
-            .form__group.form__photo-upload
-              img.form__user-photo(src=`/img/users/${user.photo}`, alt='Kullanıcı fotoğrafı')
-              input.form__upload(type='file', accept='image/*', id='photo', name='photo')
-              label(for='photo') Yeni fotoğraf seç
-            .form__group.right
-              button.btn.btn--small.btn--green Ayarları Kaydet
-
-        .line
-
-        .user-view__form-container
-          h2.heading-secondary.ma-bt-md Şifre Değiştir
-          form.form.form-user-password
-            .form__group
-              label.form__label(for='password-current') Mevcut Şifre
-              input#password-current.form__input(type='password', placeholder='••••••••', required, minlength='8')
-            .form__group
-              label.form__label(for='password') Yeni Şifre
-              input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
-            .form__group.ma-bt-lg
-              label.form__label(for='password-confirm') Şifreyi Onayla
-              input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
-            .form__group.right
-              button.btn.btn--small.btn--green.btn--save-password Şifreyi Kaydet
+        .profile-main
+          .profile-section
+            h2.profile-section__title Account Settings
+            
+            form.form.form-user-data
+              .form__row
+                .form__group
+                  label.form__label(for='name')
+                    i.fas.fa-user
+                    | Full Name
+                  input#name.form__input(type='text', value=`${user ? user.name : ''}`, required, name='name')
+                
+                .form__group
+                  label.form__label(for='email')
+                    i.fas.fa-envelope
+                    | Email Address
+                  input#email.form__input(type='email', value=`${user ? user.email : ''}`, required, name='email')
+              
+              .form__group
+                .form__photo-upload
+                  img.form__user-photo(src=`${user ? '/img/users/' + (user.photo || 'default.jpg') : '/img/users/default.jpg'}`, alt='User Photo')
+                  .form__photo-actions
+                    input.form__upload(type='file', accept='image/*', id='photo', name='photo')
+                    label.btn.btn--outline(for='photo')
+                      i.fas.fa-upload
+                      | Upload New Photo
+              
+              .form__group.form__group--right
+                button.btn.btn--primary Save Changes
+          
+          .profile-section
+            h2.profile-section__title Change Password
+            
+            form.form.form-user-password
+              .form__group
+                label.form__label(for='password-current')
+                  i.fas.fa-lock
+                  | Current Password
+                input#password-current.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              
+              .form__group
+                label.form__label(for='password')
+                  i.fas.fa-lock
+                  | New Password
+                input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              
+              .form__group
+                label.form__label(for='password-confirm')
+                  i.fas.fa-lock
+                  | Confirm New Password
+                input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
+              
+              .form__group.form__group--right
+                button.btn.btn--primary.btn--save-password Save Password

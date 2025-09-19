@@ -2,14 +2,44 @@ extends base
 
 block content
   main.main
-    .login-form.login-form--modern
-      h2.heading-secondary.ma-bt-lg Hesabına Giriş Yap
-      form.form.form--login
-        .form__group
-          label.form__label(for='email') E-posta Adresi
-          input#email.form__input(type='email', placeholder='ornek@ornek.com', required)
-        .form__group.ma-bt-md
-          label.form__label(for='password') Şifre
-          input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
-        .form__group
-          button.btn.btn--green Giriş Yap
+    .auth-container
+      .auth-card
+        .auth-header
+          img.auth-logo(src='/img/logo-green.png', alt='Bedvan Tours')
+          h1.auth-title Welcome Back
+          p.auth-subtitle Log in to your account to continue
+        
+        form.form.form--login
+          .form__group
+            label.form__label(for='email')
+              i.fas.fa-envelope
+              | Email Address
+            input#email.form__input(type='email', placeholder='you@example.com', required)
+          
+          .form__group
+            label.form__label(for='password')
+              i.fas.fa-lock
+              | Password
+            input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+          
+          .form__group.form__group--right
+            a.auth-link(href='#') Forgot Password?
+          
+          .form__group
+            button.btn.btn--primary.btn--block Login
+            
+          .form__divider
+            span.or-divider OR
+            
+          .form__group.form__group--center
+            button.btn.btn--social.btn--google
+              i.fab.fa-google
+              | Continue with Google
+            button.btn.btn--social.btn--facebook
+              i.fab.fa-facebook-f
+              | Continue with Facebook
+          
+          .form__group.form__group--center
+            p.auth-footer
+              | Don't have an account? 
+              a.auth-link(href='/signup') Sign up

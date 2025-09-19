@@ -1,0 +1,78 @@
+extends base
+
+block content
+  main.main
+    .container
+      .admin-dashboard
+        h1.heading-primary
+          span Admin Dashboard
+        
+        .dashboard-stats
+          .stat-card
+            .stat-card__icon
+              svg
+                use(xlink:href='/img/icons.svg#icon-map')
+            .stat-card__content
+              h3.stat-card__title Tours
+              p.stat-card__value= tourCount
+          .stat-card
+            .stat-card__icon
+              svg
+                use(xlink:href='/img/icons.svg#icon-users')
+            .stat-card__content
+              h3.stat-card__title Users
+              p.stat-card__value= userCount
+          .stat-card
+            .stat-card__icon
+              svg
+                use(xlink:href='/img/icons.svg#icon-briefcase')
+            .stat-card__content
+              h3.stat-card__title Bookings
+              p.stat-card__value= bookingCount
+          .stat-card
+            .stat-card__icon
+              svg
+                use(xlink:href='/img/icons.svg#icon-star')
+            .stat-card__content
+              h3.stat-card__title Reviews
+              p.stat-card__value= reviewCount
+        
+        .dashboard-actions
+          h2.heading-secondary Recent Bookings
+          table.table
+            thead
+              tr
+                th Tour
+                th User
+                th Start Date
+                th Status
+                th Actions
+            tbody
+              each booking in recentBookings
+                tr
+                  td= booking.tour.name
+                  td= booking.user.name
+                  td= new Date(booking.startDate).toLocaleDateString()
+                  td
+                    span(class=`status-badge status-badge--${booking.status}`)= booking.status
+                  td
+                    button.btn.btn--small.btn--outline Edit
+          
+          h2.heading-secondary Recent Reviews
+          table.table
+            thead
+              tr
+                th Tour
+                th User
+                th Rating
+                th Review
+                th Actions
+            tbody
+              each review in recentReviews
+                tr
+                  td= review.tour.name
+                  td= review.user.name
+                  td= review.rating
+                  td= review.review.substring(0, 50) + '...'
+                  td
+                    button.btn.btn--small.btn--outline Edit

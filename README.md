@@ -1,194 +1,209 @@
-# Bedvan - Tur Rezervasyon Uygulaması
+# Bedvan Tour Reservation System
 
-Modern tur rezervasyon uygulaması. Node.js, Express, MongoDB ve Pug template'leri kullanılarak geliştirilmiştir.
+A modern, full-featured tour reservation system built with the MERN stack (MongoDB, Express.js, React, Node.js). This application allows users to browse tours, make reservations, and manage their bookings.
 
-## 🚀 Özellikler
+## Features
 
-- ✅ Kullanıcı kimlik doğrulama (kayıt, giriş, çıkış)
-- ✅ Tur göz atma ve rezervasyon
-- ✅ Mapbox ile interaktif haritalar
-- ✅ Yorum sistemi
-- ✅ Stripe ile ödeme entegrasyonu
-- ✅ Email bildirimleri
-- ✅ Responsive tasarım
-- ✅ Bootstrap 5 entegrasyonu
+### User Features
+- User authentication (signup, login, logout)
+- Password reset via email
+- Profile management
+- Tour browsing with search, filter, and sort capabilities
+- Interactive maps with Mapbox
+- Tour booking with calendar picker
+- Review system (create, edit, delete reviews)
+- Booking history
 
-## 🔒 Güvenlik Uyarısı
+### Admin Features
+- Admin dashboard with statistics
+- Tour management (CRUD operations)
+- User management
+- Booking management
+- Review management
+- Role-based access control
 
-⚠️ **ÖNEMLİ**: Bu proje yerel geliştirme için tasarlanmıştır. Kişisel bilgilerinizi korumak için:
+### Technical Features
+- RESTful API design
+- JWT-based authentication with refresh tokens
+- Role-based authorization
+- Input validation and sanitization
+- Security headers and middleware
+- Rate limiting
+- XSS and NoSQL injection protection
+- Password hashing with bcrypt
+- Email notifications (Mailtrap integration)
+- Payment processing simulation (Stripe)
 
-1. **`config.env` dosyası asla GitHub'a yüklenmemelidir**
-2. **`config.env.example` dosyasını şablon olarak kullanın**
-3. **Tüm API anahtarlarını kendi hesaplarınızdan alın**
+## Technology Stack
 
-## 🛠️ Kurulum Talimatları
+### Backend
+- Node.js
+- Express.js
+- MongoDB with Mongoose
+- JWT for authentication
+- bcrypt for password hashing
+- Nodemailer for email
+- Stripe for payments
 
-### 1. Projeyi Klonlayın
+### Frontend
+- Pug templates for server-side rendering
+- CSS3 with custom styling
+- JavaScript (ES6+)
+- Mapbox GL JS for interactive maps
+
+### Security
+- Helmet.js for HTTP headers
+- Express rate limiting
+- CORS protection
+- XSS protection
+- NoSQL injection protection
+- Content Security Policy (CSP)
+
+## Installation
+
+1. Clone the repository:
 ```bash
-git clone <repo-url>
+git clone https://github.com/your-username/bedvan.git
 cd bedvan
 ```
 
-### 2. Bağımlılıkları Yükleyin
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-### 3. Ortam Değişkenlerini Ayarlayın
+3. Set up environment variables:
 ```bash
-# Örnek dosyayı kopyalayın
 cp config.env.example config.env
-
-# config.env dosyasını düzenleyin
-# Kendi API anahtarlarınızı ekleyin
 ```
 
-### 4. Geliştirme Sunucusunu Başlatın
+Edit `config.env` with your own values:
+- Database connection string
+- JWT secrets
+- Email configuration
+- Stripe keys
+- Mapbox access token
+
+4. Start the development server:
+```bash
+npm run dev
+```
+
+5. For production:
 ```bash
 npm start
 ```
 
-## 📋 Gerekli API Anahtarları
+## API Endpoints
 
-`config.env` dosyasında aşağıdaki değişkenleri ayarlayın:
+### Authentication
+- `POST /api/v1/users/signup` - User signup
+- `POST /api/v1/users/login` - User login
+- `POST /api/v1/users/refresh-token` - Refresh access token
+- `GET /api/v1/users/logout` - User logout
+- `POST /api/v1/users/forgotPassword` - Forgot password
+- `PATCH /api/v1/users/resetPassword/:token` - Reset password
 
-### Veritabanı
-- `DATABASE`: MongoDB bağlantı dizesi
-- `DATABASE_PASSWORD`: MongoDB şifresi
+### Tours
+- `GET /api/v1/tours` - Get all tours
+- `GET /api/v1/tours/search?query=...` - Search tours
+- `GET /api/v1/tours/difficulty/:difficulty` - Get tours by difficulty
+- `GET /api/v1/tours/tours-within/:distance/center/:latlng/unit/:unit` - Get tours within radius
+- `GET /api/v1/tours/distances/:latlng/unit/:unit` - Get distances to tours
+- `POST /api/v1/tours` - Create a new tour (admin only)
+- `GET /api/v1/tours/:id` - Get a specific tour
+- `PATCH /api/v1/tours/:id` - Update a tour (admin only)
+- `DELETE /api/v1/tours/:id` - Delete a tour (admin only)
 
-### Kimlik Doğrulama
-- `JWT_SECRET`: JWT token'ları için gizli anahtar
-- `JWT_EXPIRES_IN`: Token geçerlilik süresi (örn: 90d)
-- `JWT_COOKIE_EXPIRES_IN`: Cookie geçerlilik süresi
+### Users
+- `GET /api/v1/users/me` - Get current user data
+- `PATCH /api/v1/users/updateMe` - Update current user data
+- `DELETE /api/v1/users/deleteMe` - Delete current user
+- `PATCH /api/v1/users/updateMyPassword` - Update current user password
+- `GET /api/v1/users` - Get all users (admin only)
+- `GET /api/v1/users/:id` - Get a specific user (admin only)
+- `PATCH /api/v1/users/:id` - Update a user (admin only)
+- `DELETE /api/v1/users/:id` - Delete a user (admin only)
 
-### Email (Mailtrap)
-- `EMAIL_USERNAME`: Mailtrap kullanıcı adı
-- `EMAIL_PASSWORD`: Mailtrap şifresi
-- `EMAIL_HOST`: SMTP sunucu (sandbox.smtp.mailtrap.io)
-- `EMAIL_PORT`: SMTP port (2525)
-- `EMAIL_FROM`: Gönderen email adresi
+### Reviews
+- `GET /api/v1/reviews` - Get all reviews (admin only)
+- `POST /api/v1/reviews` - Create a new review
+- `GET /api/v1/reviews/:id` - Get a specific review
+- `PATCH /api/v1/reviews/:id` - Update a review
+- `DELETE /api/v1/reviews/:id` - Delete a review
 
-### Ödeme (Stripe)
-- `STRIPE_SECRET_KEY`: Stripe gizli anahtarı
-- `STRIPE_PUBLIC_KEY`: Stripe genel anahtarı
+### Bookings
+- `GET /api/v1/bookings/checkout-session/:tourId` - Get checkout session
+- `GET /api/v1/bookings/my-bookings` - Get current user's bookings
+- `POST /api/v1/bookings/create-booking` - Create a new booking
+- `PATCH /api/v1/bookings/update-status/:id` - Update booking status (admin only)
+- `GET /api/v1/bookings` - Get all bookings (admin only)
+- `GET /api/v1/bookings/:id` - Get a specific booking
+- `PATCH /api/v1/bookings/:id` - Update a booking (admin only)
+- `DELETE /api/v1/bookings/:id` - Delete a booking (admin only)
 
-### Harita (Mapbox)
-- `MAPBOX_ACCESS_TOKEN`: Mapbox erişim token'ı
+## Role-Based Access Control
 
-## 🔌 API Endpoint'leri
+The application implements role-based access control with the following roles:
+- **User**: Can browse tours, make bookings, and manage their profile
+- **Guide**: Can manage tours they're assigned to
+- **Lead Guide**: Can manage all tours
+- **Admin**: Full access to all features
 
-### Kimlik Doğrulama
-- `POST /api/v1/users/signup` - Kullanıcı kaydı
-- `POST /api/v1/users/login` - Kullanıcı girişi
-- `GET /api/v1/users/logout` - Kullanıcı çıkışı
-- `PATCH /api/v1/users/updateMe` - Profil güncelleme
-- `PATCH /api/v1/users/updateMyPassword` - Şifre güncelleme
+## Security Features
 
-### Turlar
-- `GET /api/v1/tours` - Tüm turları getir
-- `GET /api/v1/tours/:id` - Belirli turu getir
-- `POST /api/v1/tours` - Tur oluştur (sadece admin)
-- `PATCH /api/v1/tours/:id` - Tur güncelle (sadece admin)
-- `DELETE /api/v1/tours/:id` - Tur sil (sadece admin)
+- Passwords are hashed using bcrypt
+- JWT tokens for authentication with refresh token support
+- Rate limiting to prevent abuse
+- Input validation and sanitization
+- Security headers with Helmet.js
+- XSS protection
+- NoSQL injection protection
+- Parameter pollution prevention
+- CORS protection
 
-### Yorumlar
-- `GET /api/v1/tours/:tourId/reviews` - Tur yorumlarını getir
-- `POST /api/v1/tours/:tourId/reviews` - Yorum ekle
+## Development
 
-### Rezervasyonlar
-- `GET /api/v1/bookings/checkout-session/:tourId` - Stripe checkout oturumu oluştur
-- `GET /api/v1/bookings` - Tüm rezervasyonları getir (sadece admin)
-- `POST /api/v1/bookings` - Rezervasyon oluştur (sadece admin)
-
-## 🛡️ Güvenlik Özellikleri
-
-- JWT tabanlı kimlik doğrulama
-- bcrypt ile şifre hashleme
-- Rate limiting (API istek sınırlama)
-- XSS koruması
-- NoSQL injection koruması
-- Content Security Policy (CSP)
-- Helmet.js güvenlik başlıkları
-- Express 5 uyumluluğu
-
-## 🎨 Kullanılan Teknolojiler
-
-- **Backend**: Node.js, Express.js
-- **Veritabanı**: MongoDB + Mongoose
-- **Kimlik Doğrulama**: JWT
-- **Template Engine**: Pug
-- **Haritalar**: Mapbox GL JS
-- **Ödemeler**: Stripe
-- **Email**: Nodemailer + Mailtrap
-- **Styling**: Custom CSS + Bootstrap 5
-- **Animasyonlar**: CSS + JavaScript
-
-## 🚀 Geliştirme
+To run the application in development mode:
 
 ```bash
-# Geliştirme sunucusunu başlat
+npm run dev
+```
+
+This will start the server with nodemon for automatic restarts on file changes.
+
+## Testing
+
+Unit and integration tests are implemented with Jest. To run tests:
+
+```bash
+npm test
+```
+
+## Deployment
+
+For production deployment:
+
+```bash
 npm start
-
-# Debug modu
-npm run debug
 ```
 
-## 📁 Proje Yapısı
+Make sure to set the `NODE_ENV` environment variable to `production`.
 
-```
-bedvan/
-├── controllers/     # Route handler'ları
-├── models/         # Mongoose modelleri
-├── routes/         # Express route'ları
-├── views/          # Pug template'leri
-├── public/         # Statik dosyalar
-│   ├── css/        # Stil dosyaları
-│   ├── js/         # Client-side JavaScript
-│   └── img/        # Resimler
-├── utils/          # Yardımcı fonksiyonlar
-├── dev-data/       # Geliştirme verileri
-└── config.env      # Ortam değişkenleri (gitignore'da)
-```
+## Contributing
 
-## 🔧 Özelleştirme
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a pull request
 
-### Harita Ayarları
-Mapbox token'ınızı `config.env` dosyasında `MAPBOX_ACCESS_TOKEN` olarak ayarlayın.
+## License
 
-### Ödeme Ayarları
-Stripe anahtarlarınızı `config.env` dosyasında ayarlayın:
-- `STRIPE_SECRET_KEY`: Test veya canlı gizli anahtar
-- `STRIPE_PUBLIC_KEY`: Test veya canlı genel anahtar
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-### Email Ayarları
-Mailtrap veya başka bir SMTP servisi kullanabilirsiniz.
+## Acknowledgments
 
-## 🐛 Sorun Giderme
-
-### Harita Yüklenmiyor
-- Mapbox token'ınızın doğru olduğundan emin olun
-- Browser console'da `window.MAPBOX_TOKEN` değerini kontrol edin
-
-### Ödeme Çalışmıyor
-- Stripe anahtarlarınızın doğru olduğundan emin olun
-- Test modunda olduğunuzdan emin olun
-
-### Email Gönderilmiyor
-- Mailtrap bilgilerinizi kontrol edin
-- SMTP ayarlarınızı doğrulayın
-
-## 📝 Lisans
-
-Bu proje eğitim amaçlı geliştirilmiştir.
-
-## 🤝 Katkıda Bulunma
-
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/amazing-feature`)
-3. Commit yapın (`git commit -m 'Add amazing feature'`)
-4. Push yapın (`git push origin feature/amazing-feature`)
-5. Pull Request oluşturun
-
----
-
-**Not**: Bu proje yerel geliştirme için tasarlanmıştır. Production'a çıkmadan önce güvenlik ayarlarını gözden geçirin.
+- [Mapbox](https://www.mapbox.com/) for interactive maps
+- [Stripe](https://stripe.com/) for payment processing
+- [Mailtrap](https://mailtrap.io/) for email testing

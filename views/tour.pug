@@ -2,119 +2,137 @@ extends base
 include _reviewCard
 
 block append head
-  script(src='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.js')
-  link(rel='stylesheet', href='https://api.mapbox.com/mapbox-gl-js/v0.54.0/mapbox-gl.css')
-  script(src='https://js.stripe.com/v3/')
-  script(src='/js/stripe.js')
-  script(src='/js/animations.js')
+  script(src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js')
+  link(href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet')
+  script.
+    window.MAPBOX_TOKEN = '#{mapboxToken}';
 
 mixin overviewBox(label, text, icon)
-  .overview-box__detail.overview-box__detail--modern
-    svg.overview-box__icon
-      use(xlink:href=`/img/icons.svg#icon-${icon}`)
-    span.overview-box__label= label
-    span.overview-box__text= text
+  .overview-box__detail
+    i(class=`fas fa-${icon} overview-box__icon`)
+    .overview-box__content
+      span.overview-box__label= label
+      span.overview-box__text= text
 
 block content
-  main.main
-    // Hero Bölümü
-    section.section-header.section-header--modern
-      .header__hero
-        .header__hero-overlay
-        img.header__hero-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
-      .heading-box.heading-box--modern
-        h1.heading-primary
-          span= `${tour.name} Turu`
-        .heading-box__group
-          .heading-box__detail
-            svg.heading-box__icon
-              use(xlink:href='/img/icons.svg#icon-clock')
-            span.heading-box__text= `${tour.duration} gün`
-          .heading-box__detail
-            svg.heading-box__icon
-              use(xlink:href='/img/icons.svg#icon-map-pin')
-            span.heading-box__text= tour.startLocation.description
+  section.tour-header
+    .tour-header__image
+      img.tour-header__img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+      .tour-header__overlay
+        .container
+          h1.tour-header__title= tour.name
+          .tour-header__badges
+            span(class=`badge badge--large badge--${tour.difficulty}`)= tour.difficulty
+            span.badge.badge--large= `${tour.duration} days`
 
-    // Hızlı Bilgiler ve Rehberler
-    section.section-description.section-description--modern
-      .container
-        .overview-box.overview-box--modern
-          .overview-box__group
-            h2.heading-secondary.ma-bt-lg Hızlı Bilgiler
-            - var date = tour.startDates[0].toLocaleString('en-us', { month: 'long', year: 'numeric' })
-            +overviewBox('Başlangıç Tarihi', date, 'calendar')
-            +overviewBox('Zorluk', tour.difficulty, 'trending-up')
-            +overviewBox('Katılımcılar', `${tour.maxGroupSize} kişi`, 'user')
-            +overviewBox('Puan', `${tour.ratingsAverage} / 5`, 'star')
-          .overview-box__group
-            h2.heading-secondary.ma-bt-lg Tur Rehberleriniz
+  .container
+    .tour-content
+      .tour-details
+        .tour-section
+          h2.tour-section__title Overview
+          p.tour-description= tour.description
+
+        .tour-section
+          h2.tour-section__title Quick Facts
+          .overview-box
+            .overview-box__group
+              +overviewBox('Next Date', tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'}), 'calendar')
+              +overviewBox('Difficulty', tour.difficulty, 'trending-up')
+              +overviewBox('Participants', `${tour.maxGroupSize} people`, 'users')
+              +overviewBox('Rating', `${tour.ratingsAverage} / 5`, 'star')
+
+        .tour-section
+          h2.tour-section__title Your Tour Guides
+          .guides
             each guide in tour.guides
-              .overview-box__detail
-                img.overview-box__img(src=`/img/users/${guide.photo}`, alt=`${guide.name}`)
-                if guide.role === 'lead-guide'
-                  span.overview-box__label Baş Rehber
-                else
-                  span.overview-box__label Tur Rehberi
-                span.overview-box__text= guide.name
+              .guide-card
+                img.guide-card__img(src=`/img/users/${guide.photo}`, alt=`${guide.name}`)
+                .guide-card__info
+                  h3.guide-card__name= guide.name
+                  p.guide-card__role= guide.role === 'lead-guide' ? 'Lead Guide' : 'Tour Guide'
 
-        .description-box.description-box--modern
-          h2.heading-secondary.ma-bt-lg= `${tour.name} Turu Hakkında`
-          - var paragraphs = tour.description.split('\n')
-          each p in paragraphs
-            p.description__text= p
+        .tour-section
+          h2.tour-section__title Gallery
+          .gallery
+            each img, i in tour.images
+              .gallery__item
+                img.gallery__img(src=`/img/tours/${img}`, alt=`Tour gallery ${i + 1}`)
 
-    // Galeri
-    section.section-pictures.section-pictures--modern
-      .container
-        each img, i in tour.images
-          .picture-box
-            img.picture-box__img(
-              src=`/img/tours/${img}`
-              alt=`${tour.name} resim ${i + 1}`
-              class=`picture-box__img--${i + 1}`
-            )
+        .tour-section
+          h2.tour-section__title Map
+          #map.tour-map(data-locations=`${JSON.stringify(tour.locations)}`)
 
-    // Harita
-    section.section-map.section-map--modern
-      .container
-        h2.section-title Tur Konumları
-        #map(data-locations=`${JSON.stringify(tour.locations)}`)
+        .tour-section
+          h2.tour-section__title Reviews
+          .reviews
+            each review in tour.reviews
+              +reviewCard(review)
+          
+          // Review submission form
+          if user && user !== null
+            .reviews__form
+              h3.submit-review__title Add Your Review
+              form.form.form--review#review-form(data-tour-id=`${tour.id}`)
+                .form__group
+                  label.form__label(for='review-rating') Your Rating
+                  .review-rating
+                    .stars
+                      - for (let i = 1; i <= 5; i++)
+                        svg.star-rating__star(data-rating=`${i}`)
+                          use(xlink:href='/img/icons.svg#icon-star')
+                    input#review-rating(type='hidden', name='rating', value='0', required)
+                
+                .form__group
+                  label.form__label(for='review-text') Your Review
+                  textarea#review-text.form__textarea(name='review', placeholder='Share your experience...', required)
+                
+                button.btn.btn--primary.btn--small#submit-review Submit Review
+          else
+            p.reviews__login-message
+              a(href='/login') Log in 
+              | to submit a review
 
-    // Yorumlar
-    section.section-reviews.section-reviews--modern
-      .container
-        h2.section-title Müşterilerimizin Yorumları
-        .reviews
-          each review in tour.reviews
-            +reviewCard(review)
-        if user
-          form#review-form.mt-4(data-tour-id=tour.id)
+      .tour-booking
+        .booking-card
+          .booking-card__header
+            h2.booking-card__title Book This Tour
+            .booking-card__price
+              span.booking-card__price-value= `$${tour.price}`
+              span.booking-card__price-text per person
+          
+          form.form.form--booking
             .form__group
-              label.form__label(for='review-rating') Puan (1-5)
-              select#review-rating.form__input
-                option(value='5' selected) 5
-                option(value='4') 4
-                option(value='3') 3
-                option(value='2') 2
-                option(value='1') 1
+              label.form__label(for='startDate') Start Date
+              input#startDate.form__input(type='date', name='startDate', required)
             .form__group
-              label.form__label(for='review-text') Yorumunuz
-              textarea#review-text.form__input(placeholder='Deneyiminizi yazın...' rows='3')
+              label.form__label(for='endDate') End Date
+              input#endDate.form__input(type='date', name='endDate', required)
             .form__group
-              button.btn.btn--green(type='submit') Gönder
+              if user && user !== null
+                button.btn.btn--primary.btn--block#bookTour(data-tour-id=`${tour.id}`) Book Now
+              else
+                a.btn.btn--primary.btn--block(href='/login') Log in to Book
 
-    // Rezervasyon CTA
-    section.section-cta.section-cta--modern
+  section.section-cta
+    .cta
       .container
-        .cta.cta--modern
-          .cta__img.cta__img--logo
-            img(src='/img/logo.jpg', alt='Dmc')
-          img.cta__img.cta__img--1(src=`/img/tours/${tour.images[1]}`, alt='Tur resmi')
-          img.cta__img.cta__img--2(src=`/img/tours/${tour.images[2]}`, alt='Tur resmi')
-          .cta__content
-            h2.heading-secondary Daha neyi bekliyorsun?
-            p.cta__text= `${tour.duration} gün. 1 macera. Sonsuz anılar. Hemen yerini ayır!`
-            if user
-              button.btn.btn--green.span-all-rows#book-tour(data-tour-id=tour.id) Turu Rezerve Et!
-            else
-              a.btn.btn--green.span-all-rows(href='/login') Rezervasyon için giriş yap
+        .cta__content
+          h2.cta__title What are you waiting for?
+          p.cta__text= `${tour.duration} days. 1 adventure. Infinite memories. Make it yours today!`
+          
+          if user && user !== null
+            button.btn.btn--primary.btn--large#book-tour(data-tour-id=`${tour.id}`) Book Tour Now
+          else
+            a.btn.btn--primary.btn--large(href='/login') Log in to Book Tour
+
+  .container
+    .tour-navigation
+      a.btn.btn--back(href='/')
+        i.fas.fa-arrow-left
+        | Back to Tours
+      button.btn.btn--back(onclick='window.scrollTo({top: 0, behavior: "smooth"});')
+        i.fas.fa-arrow-up
+        | Back to Top
+
+  script(src='/js/map-test.js')
+  script(src='/js/map-debug.js')

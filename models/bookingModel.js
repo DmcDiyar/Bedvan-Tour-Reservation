@@ -13,18 +13,26 @@ const bookingSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    require: [true, 'Booking must have a price.']
+    required: [true, 'Booking must have a price!']
+  },
+  paid: {
+    type: Boolean,
+    default: true
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'confirmed', 'cancelled'],
+    default: 'pending'
   },
   createdAt: {
     type: Date,
     default: Date.now()
   },
-  paid: {
-    type: Boolean,
-    default: true
-  }
+  startDate: Date,
+  endDate: Date
 });
 
+// Populate tour and user data when querying bookings
 bookingSchema.pre(/^find/, function(next) {
   this.populate('user').populate({
     path: 'tour',

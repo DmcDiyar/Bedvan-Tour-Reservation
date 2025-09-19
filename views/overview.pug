@@ -2,58 +2,92 @@ extends base
 
 block content
   main.main
-    // Hero Bölümü
-    section.hero-section.hero-section--modern
-      .hero__overlay
-      //- Resim yolunu sen belirteceksin
-      img.hero__img(src='/img/dd.webp', alt='Harika Turlar Keşfet')
+    section.hero
       .hero__content
-        h1.hero__title Maceranı Keşfet
-        p.hero__subtitle Bedwan ile unutulmaz bir yolculuğa çık
+        h1.hero__title Discover Amazing Tours
+        p.hero__subtitle Book unforgettable adventures with local experts around the world
+        .hero__cta
+          a.btn.btn--primary(href='#tourContainer') Explore Tours
+          a.btn.btn--secondary(href='/signup') Sign Up Now
+    
+    .container
+      section#about.about-section
+        .about-content
+          h2.about-section__title About Bedvan Tours
+          p.about-section__text.
+            Bedvan Tours was founded with a passion for adventure and a commitment to providing 
+            unforgettable experiences for travelers around the world. Our team of local experts 
+            knows the hidden gems and secret spots that make each destination truly special.
+          
+          p.about-section__text.
+            Since our inception, we've been dedicated to sustainable tourism, supporting local 
+            communities, and preserving the natural beauty of the places we visit. Every tour 
+            we offer is carefully crafted to provide an authentic experience while minimizing 
+            environmental impact.
+          
+          .hero__cta
+            a.btn.btn--primary(href='/about') Learn More About Us
+            button.btn.btn--back(onclick='window.scrollTo({top: 0, behavior: "smooth"});')
+              i.fas.fa-arrow-up
+              | Back to Top
+      
+      .tour-filters
+        .filters__header
+          h2.heading-secondary Find Your Perfect Adventure
+          p.filters__description Browse our collection of handpicked tours
+        .filters
+          .filter-group
+            label.filter-label(for='difficultyFilter') Difficulty
+            select.filter-select#difficultyFilter
+              option(value='') All Levels
+              option(value='easy') Easy
+              option(value='medium') Medium
+              option(value='difficult') Difficult
+          .filter-group
+            label.filter-label(for='sortFilter') Sort by
+            select.filter-select#sortFilter
+              option(value='price') Price (Low to High)
+              option(value='-price') Price (High to Low)
+              option(value='ratingsAverage') Rating (High to Low)
+              option(value='duration') Duration (Short to Long)
+          .filter-group
+            button.btn.btn--outline#resetFilters
+              i.fas.fa-redo
+              | Reset Filters
+      
+      .card-container#tourContainer
+        each tour in tours
+          .card
+            .card__header
+              .card__picture
+                .card__picture-overlay &nbsp;
+                img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
+              .card__badges
+                span(class=`badge badge--${tour.difficulty}`)= tour.difficulty
+              h3.card__title= tour.name
 
-    // Hakkımızda Bölümü
-    section.section-about.section-about--modern
-      .container
-        h2.section-about__title Hakkımızda
-        p.section-about__text Bedwan, doğayla iç içe unutulmaz maceralar sunar. Her turumuz, uzman rehberlerimiz eşliğinde özenle tasarlanmıştır. Hayalindeki tatili bizimle yaşa!
+            .card__details
+              .card__location
+                i.fas.fa-map-marker-alt.card__icon
+                span= tour.startLocation.description
+              .card__duration
+                i.fas.fa-calendar.card__icon
+                span= `${tour.duration} days`
+              .card__group-size
+                i.fas.fa-users.card__icon
+                span= `${tour.maxGroupSize} people`
+              .card__rating
+                .stars
+                  - for (var i = 1; i <= 5; i++)
+                    i.fas(class=`${i <= Math.floor(tour.ratingsAverage) ? 'fa-star' : 'fa-star-half-alt'}`)
+                span.card__rating-value= tour.ratingsAverage
+                span.card__rating-count= `(${tour.ratingsQuantity})`
 
-    // Tur Kartları Bölümü
-    section.section-tours.section-tours--modern
-      .container
-        h2.section-tours__title Turlarim
-        .card-container.card-container--modern
-          each tour in tours
-            .card.card--modern
-              .card__header
-                .card__picture
-                  .card__picture-overlay
-                  img.card__picture-img(src=`/img/tours/${tour.imageCover}`, alt=`${tour.name}`)
-                h3.heading-tertirary
-                  span= tour.name
-              .card__details
-                h4.card__sub-heading= `${tour.difficulty} ${tour.duration}-günlük tur`
-                p.card__text= tour.summary
-                .card__data
-                  svg.card__icon
-                    use(xlink:href='/img/icons.svg#icon-map-pin')
-                  span= tour.startLocation.description
-                .card__data
-                  svg.card__icon
-                    use(xlink:href='/img/icons.svg#icon-calendar')
-                  span= tour.startDates[0].toLocaleString('en-us', {month: 'long', year: 'numeric'})
-                .card__data
-                  svg.card__icon
-                    use(xlink:href='/img/icons.svg#icon-flag')
-                  span= `${tour.locations.length} durak`
-                .card__data
-                  svg.card__icon
-                    use(xlink:href='/img/icons.svg#icon-user')
-                  span= `${tour.maxGroupSize} kişi`
-              .card__footer
-                p
-                  span.card__footer-value= `$${tour.price}`
-                  span.card__footer-text kişi başı
-                p.card__ratings
-                  span.card__footer-value= tour.ratingsAverage
-                  span.card__footer-text= `puan (${tour.ratingsQuantity})`
-                a.btn.btn--green.btn--small(href=`/tour/${tour.slug}`) Detaylar
+            .card__footer
+              .card__price
+                span.card__price-value= `$${tour.price}`
+                span.card__price-text per person
+              a.btn.btn--primary.btn--small(href=`/tour/${tour.slug}`) View Details
+              button.btn.btn--back.btn--small(onclick='window.scrollTo({top: 0, behavior: "smooth"});')
+                i.fas.fa-arrow-up
+                | Back to Top

@@ -112,6 +112,16 @@ userSchema.methods.createPasswordResetToken = function() {
   return resetToken;
 };
 
+// Check if user has a specific role
+userSchema.methods.hasRole = function(role) {
+  return this.role === role;
+};
+
+// Check if user has any of the specified roles
+userSchema.methods.hasAnyRole = function(roles) {
+  return roles.includes(this.role);
+};
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

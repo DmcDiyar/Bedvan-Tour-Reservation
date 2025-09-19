@@ -2,20 +2,53 @@ extends base
 
 block content
   main.main
-    .signup-form.signup-form--modern
-      h2.heading-secondary Hesap Oluştur
-      form.form.form--signup
-        .form__group
-          label.form__label(for='name') İsim
-          input#name.form__input(type='text', placeholder='Adınız', required)
-        .form__group
-          label.form__label(for='email') E-posta Adresi
-          input#email.form__input(type='email', placeholder='ornek@ornek.com', required)
-        .form__group.ma-bt-md
-          label.form__label(for='password') Şifre
-          input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
-        .form__group
-          label.form__label(for='password-confirm') Şifreyi Onayla
-          input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
-        .form__group
-          button.btn.btn--primary(type='submit') Kayıt Ol
+    .auth-container
+      .auth-card
+        .auth-header
+          img.auth-logo(src='/img/logo-green.png', alt='Bedvan Tours')
+          h1.auth-title Create Account
+          p.auth-subtitle Join us to discover amazing tours around the world
+        
+        form.form.form--signup
+          .form__group
+            label.form__label(for='name')
+              i.fas.fa-user
+              | Full Name
+            input#name.form__input(type='text', placeholder='Your full name', required)
+          
+          .form__group
+            label.form__label(for='email')
+              i.fas.fa-envelope
+              | Email Address
+            input#email.form__input(type='email', placeholder='you@example.com', required)
+          
+          .form__group
+            label.form__label(for='password')
+              i.fas.fa-lock
+              | Password
+            input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
+          
+          .form__group
+            label.form__label(for='password-confirm')
+              i.fas.fa-lock
+              | Confirm Password
+            input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
+          
+          .form__group
+            button.btn.btn--primary.btn--block Sign Up
+            
+          .form__divider
+            span.or-divider OR
+            
+          .form__group.form__group--center
+            button.btn.btn--social.btn--google
+              i.fab.fa-google
+              | Continue with Google
+            button.btn.btn--social.btn--facebook
+              i.fab.fa-facebook-f
+              | Continue with Facebook
+          
+          .form__group.form__group--center
+            p.auth-footer
+              | Already have an account? 
+              a.auth-link(href='/login') Log in
